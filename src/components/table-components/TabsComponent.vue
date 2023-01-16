@@ -18,7 +18,7 @@
           px-2
           capitalize
           text-scelloo-fonts-primary-variant
-          font-medium
+          font-normal
           text-sm
           cursor-pointer
         "
@@ -40,9 +40,11 @@
       ></li>
     </ul>
 
-    <p class="text-sm font-normal text-scelloo-fonts-primary-variant">
+    <p class="text-sm font-thin text-scelloo-fonts-primary-variant">
       Total payable amount:
-      <span class="text-lg font-bold text-scelloo-primary">$900.00</span>
+      <span class="text-lg font-bold text-scelloo-primary">{{
+        formatter.format(getUnpaidTotal)
+      }}</span>
       <span class="text-lg tonf-normal text-scelloo-fonts-primary-variant">
         USD</span
       >
@@ -51,12 +53,16 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { formatter } from "@/helpers/helpers";
+
 export default {
   name: "TabinationComponent",
   props: ["tabs", "activeTab"],
   data() {
     return {
       mounted: false,
+      formatter: formatter,
     };
   },
   computed: {
@@ -74,6 +80,7 @@ export default {
         return {};
       }
     },
+    ...mapGetters(["getUnpaidTotal"]),
   },
   mounted() {
     this.mounted = true;

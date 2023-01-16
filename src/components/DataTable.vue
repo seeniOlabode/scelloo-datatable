@@ -24,9 +24,60 @@
       style="box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2)"
     >
       <div
-        class="border-b border-solid"
+        class="border-b border-solid flex items-center justify-between px-5"
         style="border-color: #d9d5ec; height: 70px"
-      ></div>
+      >
+        <div class="flex items-center">
+          <table-filter
+            @changeSort="(value) => updateSort(value)"
+            @changeUsersFilter="(value) => updateUsersFilter(value)"
+          />
+
+          <div
+            class="
+              bg-scelloo-backgrounds-stripe
+              h-full
+              rounded-md
+              flex
+              items
+              center
+              ml-5
+              border-solid border
+              hover:border-solid hover:border hover:border-scelloo-primary
+              focus-within:border-scelloo-primary
+              box-border
+              search-container-div
+            "
+            style="padding: 10px"
+          >
+            <img src="@/assets/Search.svg" alt="" />
+            <input
+              type="search"
+              placeholder="Search Users by Name, Email or Date"
+              class="bg-none text-xs w-80"
+              style="background-color: rgba(0, 0, 0, 0); margin-left: 10px"
+              id="search-input"
+              v-model="searchString"
+            />
+          </div>
+        </div>
+        <div
+          class="
+            bg-scelloo-primary
+            text-white
+            flex
+            items-center
+            justify-center
+            rounded-md
+            text-base
+            font-semibold
+            cursor-pointer
+          "
+          style="width: 99px; height: 40px"
+        >
+          PAY DUES
+        </div>
+      </div>
       <table class="w-full">
         <tr
           class="bg-scelloo-backgrounds-stripe border-b border-solid"
@@ -55,16 +106,59 @@
             <img class="" src="@/assets/More.svg" alt="" />
           </th>
         </tr>
+
         <table-entry
-          v-for="(user, index) in users"
+          v-for="(user, index) in displayedData"
           :key="user.firstName + index"
           :user="user"
+          :userDetail="userDetail"
+          @openDetail="(id) => (userDetail = id)"
         />
       </table>
       <div
+        v-if="!queriedData.length"
+        class="
+          py-10
+          flex
+          items-center
+          justify-center
+          font-medium
+          text-scelloo-fonts-primary-variant
+          tracking-wider
+        "
+      >
+        NO USERS FOUND
+      </div>
+      <div
         style="height: 45px"
-        class="w-full bg-scelloo-backgrounds-stripe rounded-b-lg"
-      ></div>
+        class="
+          w-full
+          bg-scelloo-backgrounds-stripe
+          rounded-b-lg
+          flex
+          items-center
+          justify-end
+          px-5
+        "
+      >
+        <button @click="page = previousPage" :disabled="!previousPage">
+          <img
+            class="rotate-180 transition-all"
+            :class="{ 'rotate-90': !previousPage }"
+            src="@/assets/caret.svg"
+            alt=""
+          />
+        </button>
+
+        <button
+          class="ml-14 transition-all"
+          :class="{ 'rotate-90': !nextPage }"
+          @click="page = nextPage"
+          :disabled="!nextPage"
+        >
+          <img src="@/assets/caret.svg" alt="" />
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -73,58 +167,150 @@
 import TabsComponent from "./table-components/TabsComponent.vue";
 import TableEntry from "./table-components/TableEntry.vue";
 import CheckBox from "./shared/CheckBox.vue";
+import { mapState } from "vuex";
+import { createQueryCallback } from "@/helpers/helpers";
+import TableFilter from "./table-components/TableFilter.vue";
 
 export default {
   components: {
     TabsComponent,
     TableEntry,
     CheckBox,
+    TableFilter,
+  },
+  provide() {
+    return {
+      getFilterSort: () => this.sort,
+      getFilterUsers: () => this.filterUsers,
+    };
   },
   data() {
     return {
       headings: ["Name", "User Status", "Payment Status", "Amount"],
       tabsData: {
         tabs: ["all", "paid", "unpaid", "overdue"],
-        activeTab: "paid",
+        activeTab: "all",
       },
-      users: [],
+      sort: {
+        label: "Sort By",
+        options: [
+          "Default",
+          "First Name",
+          "Last Name",
+          "Due Date",
+          "Last Login",
+        ],
+        value: "Default",
+      },
+      filterUsers: {
+        label: "Users",
+        options: ["All", "Active", "Inactive"],
+        value: "All",
+      },
+      searchString: "ASNDFJSFLKJS",
+      page: 1,
+      rowsPerPage: 10,
+      userDetail: 1,
     };
   },
-  mounted() {
-    for (let i = 0; i < 10; i++) {
-      this.users.push(
-        {
-          firstName: "Justin",
-          lastName: "Septimus",
-          email: "seeniolabode8734@gmail.com",
-          active: true,
-          lastLogin: "14/APR/2020",
-          paid: true,
-          datePaid: "15/APR/2020",
-          amount: 200,
-        },
-        {
-          firstName: "Olabode",
-          lastName: "Odebunmi",
-          email: "seeniolabode8734@gmail.com",
-          active: false,
-          lastLogin: "14/APR/2020",
-          paid: false,
-          datePaid: "15/APR/2020",
-          amount: 200,
-        },
-        {
-          firstName: "Oluwajomiloju",
-          lastName: "Ajeigbe",
-          email: "seeniolabode8734@gmail.com",
-          active: true,
-          lastLogin: "14/APR/2020",
-          paid: true,
-          datePaid: "15/APR/2020",
-          amount: 200,
-        }
+  methods: {
+    resetPage() {
+      this.page = 1;
+      this.userDetail = null;
+    },
+    updateSort(value) {
+      this.sort.value = value;
+    },
+    updateUsersFilter(value) {
+      this.filterUsers.value = value;
+    },
+  },
+  computed: {
+    ...mapState(["users"]),
+    queriedData() {
+      let querySearch = this.searchString;
+      let queryFilter =
+        this.filterUsers.value == "All"
+          ? null
+          : this.filterUsers.value == "Active";
+      let tab = this.tabsData.activeTab;
+      let queryCallback = createQueryCallback(querySearch, queryFilter, tab);
+      console.log("search", querySearch, "filter", queryFilter, "tab", tab);
+      this.resetPage();
+      return this.$store.getters.getQueriedData(queryCallback);
+    },
+    displayedData() {
+      const pageNumber = this.page;
+      const rows = this.rowsPerPage;
+      const firstDataIndex = (pageNumber - 1) * rows;
+      const lastDataIndex = pageNumber * rows;
+      const displayedSlice = this.queriedData.slice(
+        firstDataIndex,
+        lastDataIndex
       );
-    }
+      return displayedSlice;
+    },
+    previousPage() {
+      const previousPage = this.page - 1;
+      const firstPage = 1;
+      return previousPage >= firstPage ? previousPage : undefined;
+    },
+    nextPage() {
+      const nextPage = this.page + 1;
+      const maxPage = Math.ceil(this.queriedData.length / 10);
+      return nextPage <= maxPage ? nextPage : undefined;
+    },
+  },
+  mounted() {
+    // for (let i = 0; i < 10; i++) {
+    //   this.users.push(
+    //     {
+    //       firstName: "Justin",
+    //       lastName: "Septimus",
+    //       email: "bode8734@gmail.com",
+    //       active: true,
+    //       lastLogin: "14/APR/2020",
+    //       payment: "paid",
+    //       datePaid: "15/APR/2020",
+    //       amount: 200,
+    //     },
+    //     {
+    //       firstName: "Olabode",
+    //       lastName: "Odebunmi",
+    //       email: "seeniolabode8734@gmail.com",
+    //       active: false,
+    //       lastLogin: "14/APR/2020",
+    //       payment: "overdue",
+    //       datePaid: "15/APR/2020",
+    //       amount: 200,
+    //     },
+    //     {
+    //       firstName: "Oluwajomiloju",
+    //       lastName: "Ajeigbe",
+    //       email: "bee@gmail.com",
+    //       active: true,
+    //       lastLogin: "14/APR/2020",
+    //       payment: "unpaid",
+    //       datePaid: "15/APR/2020",
+    //       amount: 200,
+    //     }
+    //   );
+    // }
   },
 };
 </script>
+
+<style scoped>
+#search-input:focus-within {
+  outline: none;
+}
+
+#search-input::placeholder {
+  @apply text-scelloo-fonts-primary-variant;
+}
+
+.search-container-div {
+  border-color: rgba(0, 0, 0, 0);
+  transition: border-color 0.2s;
+}
+</style>

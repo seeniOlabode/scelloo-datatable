@@ -18,6 +18,10 @@ export default {
   data: () => ({
     //
   }),
+
+  mounted() {
+    this.$store.dispatch("fetchAndStoreUsers");
+  },
 };
 </script>
 
