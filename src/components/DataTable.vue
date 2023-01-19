@@ -1,6 +1,6 @@
 <template>
   <div class="table-container pb-28">
-    <header id="table-header" class="mb-5">
+    <header id="table-header" class="mb-5 text-center sm:text-left">
       <h1
         class="
           text-scelloo-fonts-primary-variant
@@ -20,150 +20,152 @@
     />
 
     <div
-      class="w-full mt-5 rounded-lg bg-white"
+      class="w-full mt-5 rounded-lg bg-white overflow-scroll"
       style="box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2)"
     >
-      <div
-        class="border-b border-solid flex items-center justify-between px-5"
-        style="border-color: #d9d5ec; height: 70px"
-      >
-        <div class="flex items-center">
-          <table-filter
-            @changeSort="(value) => updateSort(value)"
-            @changeUsersFilter="(value) => updateUsersFilter(value)"
-          />
+      <div style="min-width: 1240px">
+        <div
+          class="border-b border-solid flex items-center justify-between px-5"
+          style="border-color: #d9d5ec; height: 70px"
+        >
+          <div class="flex items-center">
+            <table-filter
+              @changeSort="(value) => updateSort(value)"
+              @changeUsersFilter="(value) => updateUsersFilter(value)"
+            />
 
+            <div
+              class="
+                bg-scelloo-backgrounds-stripe
+                h-full
+                rounded-md
+                flex
+                items
+                center
+                ml-5
+                border-solid border
+                hover:border-solid hover:border hover:border-scelloo-primary
+                focus-within:border-scelloo-primary
+                box-border
+                search-container-div
+              "
+              style="padding: 10px"
+            >
+              <img src="@/assets/Search.svg" alt="" />
+              <input
+                type="search"
+                placeholder="Search Users by Name, Email or Date"
+                class="bg-none text-xs w-80"
+                style="background-color: rgba(0, 0, 0, 0); margin-left: 10px"
+                id="search-input"
+                v-model="searchString"
+              />
+            </div>
+          </div>
           <div
             class="
-              bg-scelloo-backgrounds-stripe
-              h-full
-              rounded-md
+              bg-scelloo-primary
+              text-white
               flex
-              items
-              center
-              ml-5
-              border-solid border
-              hover:border-solid hover:border hover:border-scelloo-primary
-              focus-within:border-scelloo-primary
-              box-border
-              search-container-div
+              items-center
+              justify-center
+              rounded-md
+              text-base
+              font-semibold
+              cursor-pointer
             "
-            style="padding: 10px"
+            style="width: 99px; height: 40px"
+            @click="payDues()"
           >
-            <img src="@/assets/Search.svg" alt="" />
-            <input
-              type="search"
-              placeholder="Search Users by Name, Email or Date"
-              class="bg-none text-xs w-80"
-              style="background-color: rgba(0, 0, 0, 0); margin-left: 10px"
-              id="search-input"
-              v-model="searchString"
-            />
+            PAY DUES
           </div>
         </div>
+        <table class="w-full">
+          <tr
+            class="bg-scelloo-backgrounds-stripe border-b border-solid"
+            style="border-bottom-color: #d9d5ec"
+          >
+            <td class="pl-5">
+              <check-box v-model="selectAll" />
+            </td>
+            <th
+              v-for="(heading, index) in headings"
+              :key="heading + index"
+              class="
+                font-semibold
+                tracking-wider
+                uppercase
+                text-xs text-scelloo-fonts-primary-variant
+                py-4
+                text-left
+              "
+              :class="{ 'text-right': heading == 'Amount' }"
+            >
+              {{ heading }}
+            </th>
+            <th></th>
+            <th class="">
+              <img class="" src="@/assets/More.svg" alt="" />
+            </th>
+          </tr>
+
+          <table-entry
+            v-for="(user, index) in displayedData.data"
+            :key="user.firstName + index"
+            :user="user"
+            :userDetail="userDetail"
+            :entryMenu="entryMenu"
+            @openDetail="(id) => (userDetail = id)"
+            @openEntryMenu="(id) => (entryMenu = id)"
+          />
+        </table>
         <div
+          v-if="!queriedData.length"
           class="
-            bg-scelloo-primary
-            text-white
+            py-10
             flex
             items-center
             justify-center
-            rounded-md
-            text-base
-            font-semibold
-            cursor-pointer
+            font-medium
+            text-scelloo-fonts-primary-variant
+            tracking-wider
           "
-          style="width: 99px; height: 40px"
-          @click="payDues()"
         >
-          PAY DUES
+          NO USERS FOUND
         </div>
-      </div>
-      <table class="w-full">
-        <tr
-          class="bg-scelloo-backgrounds-stripe border-b border-solid"
-          style="border-bottom-color: #d9d5ec"
+        <table-footer
+          :firstDataIndex="displayedData.firstIndex"
+          :lastDataIndex="displayedData.lastIndex"
+          :dataLength="displayedData.length"
+          @rowsperpage="(rows) => (rowsPerPage = rows)"
         >
-          <td class="pl-5">
-            <check-box v-model="selectAll" />
-          </td>
-          <th
-            v-for="(heading, index) in headings"
-            :key="heading + index"
-            class="
-              font-semibold
-              tracking-wider
-              uppercase
-              text-xs text-scelloo-fonts-primary-variant
-              py-4
-              text-left
-            "
-            :class="{ 'text-right': heading == 'Amount' }"
-          >
-            {{ heading }}
-          </th>
-          <th></th>
-          <th class="">
-            <img class="" src="@/assets/More.svg" alt="" />
-          </th>
-        </tr>
+          <!-- Buttons Are Provided by DataTable through slots to keep the logic in a single component -->
 
-        <table-entry
-          v-for="(user, index) in displayedData.data"
-          :key="user.firstName + index"
-          :user="user"
-          :userDetail="userDetail"
-          :entryMenu="entryMenu"
-          @openDetail="(id) => (userDetail = id)"
-          @openEntryMenu="(id) => (entryMenu = id)"
-        />
-      </table>
-      <div
-        v-if="!queriedData.length"
-        class="
-          py-10
-          flex
-          items-center
-          justify-center
-          font-medium
-          text-scelloo-fonts-primary-variant
-          tracking-wider
-        "
-      >
-        NO USERS FOUND
+          <template #previousButton>
+            <!-- Previous page button  -->
+            <button @click="page = previousPage" :disabled="!previousPage">
+              <img
+                class="rotate-180 transition-all"
+                :class="{ 'rotate-90': !previousPage }"
+                src="@/assets/caret.svg"
+                alt=""
+              />
+            </button>
+          </template>
+
+          <template #nextButton>
+            <!-- Next page button -->
+            <button
+              class="ml-14 transition-all"
+              :class="{ 'rotate-90': !nextPage }"
+              @click="page = nextPage"
+              :disabled="!nextPage"
+            >
+              <img src="@/assets/caret.svg" alt="" />
+            </button>
+          </template>
+        </table-footer>
       </div>
-      <table-footer
-        :firstDataIndex="displayedData.firstIndex"
-        :lastDataIndex="displayedData.lastIndex"
-        :dataLength="displayedData.length"
-        @rowsperpage="(rows) => (rowsPerPage = rows)"
-      >
-        <!-- Buttons Are Provided by DataTable through slots to keep the logic in a single component -->
-
-        <template #previousButton>
-          <!-- Previous page button  -->
-          <button @click="page = previousPage" :disabled="!previousPage">
-            <img
-              class="rotate-180 transition-all"
-              :class="{ 'rotate-90': !previousPage }"
-              src="@/assets/caret.svg"
-              alt=""
-            />
-          </button>
-        </template>
-
-        <template #nextButton>
-          <!-- Next page button -->
-          <button
-            class="ml-14 transition-all"
-            :class="{ 'rotate-90': !nextPage }"
-            @click="page = nextPage"
-            :disabled="!nextPage"
-          >
-            <img src="@/assets/caret.svg" alt="" />
-          </button>
-        </template>
-      </table-footer>
     </div>
   </div>
 </template>
@@ -281,7 +283,8 @@ export default {
     },
     nextPage() {
       const nextPage = this.page + 1;
-      const maxPage = Math.ceil(this.queriedData.length / 10);
+      const rows = this.rowsPerPage;
+      const maxPage = Math.ceil(this.queriedData.length / rows);
       return nextPage <= maxPage ? nextPage : undefined;
     },
   },

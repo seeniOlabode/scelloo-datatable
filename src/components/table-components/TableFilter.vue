@@ -9,7 +9,12 @@
         border-solid border-scelloo-fonts-stroke border
         font-thin
         text-base
+        hover:border-scelloo-primary
       "
+      :class="{
+        'filter-show': showSelect,
+        'border-scelloo-primary': showSelect,
+      }"
       style="width: 99px; height: 40px; gap: 10px"
       @click="showSelect = !showSelect"
     >
@@ -62,32 +67,9 @@ export default {
   data() {
     return {
       showSelect: false,
-      // sort: {
-      //   label: "Sort By",
-      //   options: [
-      //     "Default",
-      //     "First Name",
-      //     "Last Name",
-      //     "Due Date",
-      //     "Last Login",
-      //   ],
-      //   value: "Default",
-      // },
-      // filterUsers: {
-      //   label: "Users",
-      //   options: ["All", "Active", "Inactive"],
-      //   value: "All",
-      // },
     };
   },
-  methods: {
-    // updateSort(value) {
-    //   this.sort.value = value;
-    // },
-    // updateUsers(value) {
-    //   this.filterUsers.value = value;
-    // },
-  },
+  methods: {},
   computed: {
     sort() {
       return this.getFilterSort();
@@ -108,5 +90,9 @@ export default {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+
+.filter-show {
+  box-shadow: 0px 0px 3px #6d5bd0;
 }
 </style>

@@ -8,9 +8,13 @@
       flex
       justify-between
       items-center
+      flex-col
+      sm:flex-row
+      gap-3
+      sm:gap-0
     "
   >
-    <ul class="flex">
+    <ul class="flex order-1 sm:order-none">
       <li
         v-for="(tab, index) in tabs"
         :key="tab + index"
@@ -35,6 +39,8 @@
           bottom-0
           bg-scelloo-fonts-primary
           transition-transform
+          hidden
+          sm:list-item
         "
         :style="{ height: '2px', ...highlightClasses }"
       ></li>

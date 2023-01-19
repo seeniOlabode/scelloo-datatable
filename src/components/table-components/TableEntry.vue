@@ -157,7 +157,7 @@ export default {
   name: "TableEntry",
   components: { CheckBox, TableEntryDetail, TableEntryMenu },
   props: ["user", "userDetail", "entryMenu"],
-  emits: ["openDetail"],
+  emits: ["openDetail", "openEntryMenu"],
   inject: ["getSelectAll", "getDuesPaid"],
   data() {
     return {

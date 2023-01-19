@@ -1,7 +1,6 @@
 <template>
   <div class="custom-select relative">
     <label
-      for=""
       class="text-xs text-scelloo-fonts-primary-variant flex cursor-pointer"
       @click="displayOptions = !displayOptions"
       ><span
@@ -58,6 +57,7 @@
 export default {
   name: "RowSelectComponent",
   props: ["rowSelectData"],
+  emits: ["rowsperpage"],
   data() {
     return {
       selectedOption: this.rowSelectData.options[0],
