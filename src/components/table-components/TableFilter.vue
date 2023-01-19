@@ -24,6 +24,7 @@
           border-solid border border-scelloo-fonts-stroke
           rounded-md
           mt-2
+          z-20
         "
         v-show="showSelect"
         style="width: 224px; padding: 20px 10px"
@@ -32,6 +33,7 @@
           :radioOptions="sort.options"
           :selectLabel="sort.label"
           :defaultValue="sort.value"
+          selectName="sort"
           @radioSelect="(value) => $emit('changeSort', value)"
         />
         <hr style="margin-top: 5px" />
@@ -39,6 +41,7 @@
           :radioOptions="filterUsers.options"
           :selectLabel="filterUsers.label"
           :defaultValue="filterUsers.value"
+          selectName="filter"
           style="margin-top: 10px"
           @radioSelect="(value) => $emit('changeUsersFilter', value)"
         />
@@ -58,7 +61,7 @@ export default {
   inject: ["getFilterSort", "getFilterUsers"],
   data() {
     return {
-      showSelect: true,
+      showSelect: false,
       // sort: {
       //   label: "Sort By",
       //   options: [

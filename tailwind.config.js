@@ -15,6 +15,7 @@ module.exports = {
         "scelloo-backgrounds-stripe": "#F4F2FF",
         "scelloo-fonts-primary-icon": "#8B83BA",
         "scelloo-fonts-positive": "#007F00",
+        "scelloo-fonts-negative": "#D30000",
       },
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],

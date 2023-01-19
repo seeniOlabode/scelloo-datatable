@@ -74,6 +74,7 @@
             cursor-pointer
           "
           style="width: 99px; height: 40px"
+          @click="payDues()"
         >
           PAY DUES
         </div>
@@ -84,7 +85,7 @@
           style="border-bottom-color: #d9d5ec"
         >
           <td class="pl-5">
-            <check-box />
+            <check-box v-model="selectAll" />
           </td>
           <th
             v-for="(heading, index) in headings"
@@ -108,11 +109,13 @@
         </tr>
 
         <table-entry
-          v-for="(user, index) in displayedData"
+          v-for="(user, index) in displayedData.data"
           :key="user.firstName + index"
           :user="user"
           :userDetail="userDetail"
+          :entryMenu="entryMenu"
           @openDetail="(id) => (userDetail = id)"
+          @openEntryMenu="(id) => (entryMenu = id)"
         />
       </table>
       <div
@@ -129,36 +132,38 @@
       >
         NO USERS FOUND
       </div>
-      <div
-        style="height: 45px"
-        class="
-          w-full
-          bg-scelloo-backgrounds-stripe
-          rounded-b-lg
-          flex
-          items-center
-          justify-end
-          px-5
-        "
+      <table-footer
+        :firstDataIndex="displayedData.firstIndex"
+        :lastDataIndex="displayedData.lastIndex"
+        :dataLength="displayedData.length"
+        @rowsperpage="(rows) => (rowsPerPage = rows)"
       >
-        <button @click="page = previousPage" :disabled="!previousPage">
-          <img
-            class="rotate-180 transition-all"
-            :class="{ 'rotate-90': !previousPage }"
-            src="@/assets/caret.svg"
-            alt=""
-          />
-        </button>
+        <!-- Buttons Are Provided by DataTable through slots to keep the logic in a single component -->
 
-        <button
-          class="ml-14 transition-all"
-          :class="{ 'rotate-90': !nextPage }"
-          @click="page = nextPage"
-          :disabled="!nextPage"
-        >
-          <img src="@/assets/caret.svg" alt="" />
-        </button>
-      </div>
+        <template #previousButton>
+          <!-- Previous page button  -->
+          <button @click="page = previousPage" :disabled="!previousPage">
+            <img
+              class="rotate-180 transition-all"
+              :class="{ 'rotate-90': !previousPage }"
+              src="@/assets/caret.svg"
+              alt=""
+            />
+          </button>
+        </template>
+
+        <template #nextButton>
+          <!-- Next page button -->
+          <button
+            class="ml-14 transition-all"
+            :class="{ 'rotate-90': !nextPage }"
+            @click="page = nextPage"
+            :disabled="!nextPage"
+          >
+            <img src="@/assets/caret.svg" alt="" />
+          </button>
+        </template>
+      </table-footer>
     </div>
   </div>
 </template>
@@ -170,6 +175,7 @@ import CheckBox from "./shared/CheckBox.vue";
 import { mapState } from "vuex";
 import { createQueryCallback } from "@/helpers/helpers";
 import TableFilter from "./table-components/TableFilter.vue";
+import TableFooter from "./table-components/TableFooter.vue";
 
 export default {
   components: {
@@ -177,15 +183,20 @@ export default {
     TableEntry,
     CheckBox,
     TableFilter,
+    TableFooter,
   },
   provide() {
     return {
       getFilterSort: () => this.sort,
       getFilterUsers: () => this.filterUsers,
+      getSelectAll: () => this.selectAll,
+      getOpenDetailMenu: () => this.openDetailMenu,
+      getDuesPaid: () => this.duesPaid,
     };
   },
   data() {
     return {
+      selectAll: false,
       headings: ["Name", "User Status", "Payment Status", "Amount"],
       tabsData: {
         tabs: ["all", "paid", "unpaid", "overdue"],
@@ -207,16 +218,19 @@ export default {
         options: ["All", "Active", "Inactive"],
         value: "All",
       },
-      searchString: "ASNDFJSFLKJS",
+      searchString: "",
       page: 1,
       rowsPerPage: 10,
       userDetail: 1,
+      entryMenu: null,
+      duesPaid: 0,
     };
   },
   methods: {
     resetPage() {
       this.page = 1;
       this.userDetail = null;
+      this.selectAll = false;
     },
     updateSort(value) {
       this.sort.value = value;
@@ -224,9 +238,14 @@ export default {
     updateUsersFilter(value) {
       this.filterUsers.value = value;
     },
+    payDues() {
+      this.duesPaid += this.selectedUsers.size;
+      this.$store.commit("paySelectedDues");
+      this.selectAll = false;
+    },
   },
   computed: {
-    ...mapState(["users"]),
+    ...mapState(["users", "selectedUsers"]),
     queriedData() {
       let querySearch = this.searchString;
       let queryFilter =
@@ -235,11 +254,11 @@ export default {
           : this.filterUsers.value == "Active";
       let tab = this.tabsData.activeTab;
       let queryCallback = createQueryCallback(querySearch, queryFilter, tab);
-      console.log("search", querySearch, "filter", queryFilter, "tab", tab);
       this.resetPage();
-      return this.$store.getters.getQueriedData(queryCallback);
+      return this.$store.getters.getQueriedData(queryCallback, this.sort.value);
     },
     displayedData() {
+      // Displayed Data returns an object with a data property, first and last index property
       const pageNumber = this.page;
       const rows = this.rowsPerPage;
       const firstDataIndex = (pageNumber - 1) * rows;
@@ -248,7 +267,12 @@ export default {
         firstDataIndex,
         lastDataIndex
       );
-      return displayedSlice;
+      return {
+        data: displayedSlice,
+        firstIndex: firstDataIndex,
+        lastIndex: lastDataIndex,
+        length: this.queriedData.length,
+      };
     },
     previousPage() {
       const previousPage = this.page - 1;
@@ -261,46 +285,19 @@ export default {
       return nextPage <= maxPage ? nextPage : undefined;
     },
   },
-  mounted() {
-    // for (let i = 0; i < 10; i++) {
-    //   this.users.push(
-    //     {
-    //       firstName: "Justin",
-    //       lastName: "Septimus",
-    //       email: "bode8734@gmail.com",
-    //       active: true,
-    //       lastLogin: "14/APR/2020",
-    //       payment: "paid",
-    //       datePaid: "15/APR/2020",
-    //       amount: 200,
-    //     },
-    //     {
-    //       firstName: "Olabode",
-    //       lastName: "Odebunmi",
-    //       email: "seeniolabode8734@gmail.com",
-    //       active: false,
-    //       lastLogin: "14/APR/2020",
-    //       payment: "overdue",
-    //       datePaid: "15/APR/2020",
-    //       amount: 200,
-    //     },
-    //     {
-    //       firstName: "Oluwajomiloju",
-    //       lastName: "Ajeigbe",
-    //       email: "bee@gmail.com",
-    //       active: true,
-    //       lastLogin: "14/APR/2020",
-    //       payment: "unpaid",
-    //       datePaid: "15/APR/2020",
-    //       amount: 200,
-    //     }
-    //   );
-    // }
+  watch: {
+    displayedData() {
+      this.selectAll = false;
+    },
   },
+  mounted() {},
 };
 </script>
 
 <style scoped>
+.table-container {
+  user-select: none;
+}
 #search-input:focus-within {
   outline: none;
 }

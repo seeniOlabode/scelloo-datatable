@@ -1,7 +1,12 @@
 <template>
   <div class="checkbox-container">
     <label class="switch flex items-center justify-center">
-      <input type="checkbox" @change="($event) => emitValue($event)" />
+      <input
+        type="checkbox"
+        @change="$emit('update:modelValue', $event.target.checked)"
+        :value="modelValue"
+        :checked="modelValue"
+      />
       <span class="box">
         <img src="@/assets/icon-check.svg" alt="" />
       </span>
@@ -18,7 +23,7 @@ export default {
       required: true,
     },
   },
-  emits: ["modelValue", "markCheck"],
+  emits: ["update:modelValue"],
   data() {
     return {
       localValue: false,
@@ -27,17 +32,7 @@ export default {
   mounted() {
     this.localValue = this.initialValue;
   },
-  methods: {
-    emitValue($event) {
-      this.localValue = $event.target.checked;
-      this.$emit("modelValue", $event.target.checked, this.index);
-      this.$emit(
-        "markCheck",
-        $event.target.checked,
-        Number(this.checkId.replace("check", ""))
-      );
-    },
-  },
+  methods: {},
 };
 </script>
 

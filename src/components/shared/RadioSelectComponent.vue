@@ -35,11 +35,11 @@
           tracking-wider
         "
         >{{ option }}</label
-      ><br />
+      >
       <input
         type="radio"
         :id="option + index + selectName"
-        :name="filter"
+        :name="selectName"
         :value="option"
         class="cursor-pointer"
         v-model="picked"
@@ -52,13 +52,11 @@
 <script>
 export default {
   name: "RadioSelectComponent",
-  props: ["radioOptions", "selectLabel", "defaultValue"],
+  props: ["radioOptions", "selectLabel", "defaultValue", "selectName"],
   data() {
     return {
       options: ["Default", "First Name", "Last Name", "Due Date", "Last Login"],
       picked: this.defaultValue,
-      selectName: "filter",
-      title: "Sort By",
     };
   },
   methods: {
@@ -85,7 +83,6 @@ input[type="radio"] {
   height: 1.15em;
   border: 0.15em solid #8b83ba;
   border-radius: 50%;
-  /* transform: translateY(-0.075em); */
   display: grid;
   place-content: center;
 }
@@ -95,7 +92,7 @@ input[type="radio"]::before {
   width: 0.45em;
   height: 0.45em;
   border-radius: 50%;
-  transform: scale(1) translate(0.249999999px);
+  transform: scale(0) translate(0.249999999px);
   transition: 120ms transform ease-in-out;
   box-shadow: inset 1em 1em white;
 }
@@ -106,6 +103,6 @@ input[type="radio"]:checked {
 }
 
 input[type="radio"]:checked::before {
-  transform: scale(1);
+  transform: scale(1) translate(0.249999999px);
 }
 </style>

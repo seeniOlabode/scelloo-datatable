@@ -20,20 +20,24 @@
               "
             >
               <h5 class="flex" :class="{ 'pl-24': index == 0 }">
-                {{ heading }}
-                <img
-                  v-if="heading == 'detail'"
-                  src="@/assets/Info.svg"
-                  alt=""
-                  class="ml-1"
-                />
+                <span class="flex" :class="{ relative: heading == 'detail' }">
+                  {{ heading }}
+                  <img
+                    v-if="heading == 'detail'"
+                    src="@/assets/Info.svg"
+                    alt=""
+                    class="ml-1"
+                    :class="{ 'detail-heading-hover': heading == 'detail' }"
+                  />
+                  <tool-tip v-if="heading == 'detail'" className="tool-tip" />
+                </span>
               </h5>
             </th>
           </tr>
           <tr
             v-for="(deet, index) in userDeets"
             :key="deet + index"
-            class="detail-row border-b border-solid last:border-b-0"
+            class="detail-row border-b border-solid last:border-b-0 select-text"
             style="border-color: #d9d5ec"
           >
             <td
@@ -68,20 +72,48 @@
             </td>
           </tr>
         </table>
+        <div
+          v-if="!userDeets.length"
+          class="
+            py-10
+            flex
+            items-center
+            justify-center
+            font-medium
+            text-scelloo-fonts-primary-variant
+            tracking-wider
+            bg-scelloo-backgrounds-stripe
+          "
+        >
+          NO RECORDS FOUND
+        </div>
       </td>
     </tr>
   </transition>
 </template>
 
 <script>
+import ToolTip from "../shared/ToolTip.vue";
+
 export default {
   name: "TableEntryDetail",
-  props: ["userId"],
+  props: ["userId", "userEntryDetail"],
+  components: {
+    ToolTip,
+  },
   data() {
     return {
       headings: ["date", "user activity", "detail"],
-      userDeets: [1, 2, 3, 4],
     };
+  },
+  computed: {
+    userDeets() {
+      let deets = [];
+      for (let i = 0; i < this.userEntryDetail; i++) {
+        deets.push(i);
+      }
+      return deets;
+    },
   },
 };
 </script>
@@ -103,5 +135,13 @@ export default {
 
 .v-leave-to {
   height: auto;
+}
+
+:global(.detail-heading-hover:hover + .tool-tip) {
+  display: block;
+}
+
+:global(.detail-heading-hover + .tool-tip) {
+  display: none;
 }
 </style>

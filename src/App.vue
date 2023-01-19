@@ -1,6 +1,6 @@
 <template>
   <main class="container mx-auto pt-14">
-    <data-table />
+    <data-table style="min-width: 1280px" />
   </main>
 </template>
 

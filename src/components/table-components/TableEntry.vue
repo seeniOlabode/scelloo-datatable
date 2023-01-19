@@ -5,17 +5,26 @@
   >
     <td class="pl-5">
       <div class="flex items-center">
-        <check-box />
-        <span class="ml-5"
-          ><img
+        <check-box v-model="userSelected" />
+        <button
+          class="ml-5 cursor-pointer"
+          @click="
+            () =>
+              userDetail == user.id
+                ? $emit('openDetail', null)
+                : $emit('openDetail', user.id)
+          "
+        >
+          <img
             src="@/assets/Master.svg"
             alt=""
             :class="{ 'rotate-180': user.id == userDetail }"
             class="transition-transform"
-        /></span>
+          />
+        </button>
       </div>
     </td>
-    <td class="flex flex-col" style="gap: 5px">
+    <td class="flex flex-col select-text" style="gap: 5px">
       <span class="font-normal text-scelloo-fonts-primary text-sm">{{
         `${user.firstName} ${user.lastName}`
       }}</span>
@@ -36,7 +45,12 @@
           {{ user.active ? "Active" : "Inactive" }}</span
         >
         <span
-          class="w-full text-xs text-scelloo-fonts-primary-variant font-normal"
+          class="
+            w-full
+            text-xs text-scelloo-fonts-primary-variant
+            font-normal
+            select-text
+          "
           style="margin-top: 5px"
           >{{ `Last login: ${user.lastLogin}` }}</span
         >
@@ -51,13 +65,18 @@
           ><span style="font-size: 16px">•</span> {{ user.payment }}</span
         >
         <span
-          class="w-full text-xs text-scelloo-fonts-primary font-normal"
+          class="
+            w-full
+            text-xs text-scelloo-fonts-primary
+            font-normal
+            select-text
+          "
           style="margin-top: 5px"
           >{{ `${paidStatusText}: ${user.datePaid}` }}</span
         >
       </div>
     </td>
-    <td>
+    <td class="select-text">
       <div class="flex flex-wrap text-right">
         <span class="text-sm w-full text-scelloo-fonts-primary"
           >${{ user.amount }}</span
@@ -75,45 +94,119 @@
     </td>
 
     <td>
-      <div class="flex items-center">
+      <div class="flex items-center justify-center">
         <span
           class="
             text-xs text-scelloo-fonts-primary-variant text-center
-            w-full
             cursor-pointer
+            hover:bg-scelloo-backgrounds-parent
+            rounded
           "
+          style="padding: 5px"
           @click="
             () =>
               userDetail == user.id
                 ? $emit('openDetail', null)
                 : $emit('openDetail', user.id)
           "
-          >View More</span
+          >View {{ user.id == userDetail ? "Less" : "More" }}</span
         >
       </div>
     </td>
 
-    <td><img src="@/assets/More.svg" alt="" /></td>
+    <td>
+      <div class="relative">
+        <button
+          class="cursor-pointer"
+          @click="
+            entryMenu == user.id
+              ? $emit('openEntryMenu', null)
+              : $emit('openEntryMenu', user.id)
+          "
+        >
+          <img src="@/assets/More.svg" alt="" />
+        </button>
+        <table-entry-menu :menuOpen="entryMenu == user.id">
+          <template #close>
+            <button
+              class="aspect-square rounded-full border border-solid bg-white"
+              style="padding: 6.5px"
+              @click="$emit('openEntryMenu', null)"
+            >
+              <img src="@/assets/Close.svg" alt="" />
+            </button>
+          </template>
+        </table-entry-menu>
+      </div>
+    </td>
   </tr>
-  <table-entry-detail v-show="user.id == userDetail" :userId="user.id" />
+  <table-entry-detail
+    v-show="user.id == userDetail"
+    :userId="user.id"
+    :userEntryDetail="user.userDetails"
+  />
 </template>
-
-
 
 <script>
 import CheckBox from "../shared/CheckBox.vue";
 import TableEntryDetail from "./TableEntryDetail.vue";
+import { mapState } from "vuex";
+import TableEntryMenu from "./TableEntryMenu.vue";
 
 export default {
   name: "TableEntry",
-  components: { CheckBox, TableEntryDetail },
-  props: ["user", "userDetail"],
+  components: { CheckBox, TableEntryDetail, TableEntryMenu },
+  props: ["user", "userDetail", "entryMenu"],
+  emits: ["openDetail"],
+  inject: ["getSelectAll", "getDuesPaid"],
   data() {
     return {
       userSelected: false,
+      mounted: false,
     };
   },
+  mounted() {
+    if (this.selectedUsers.has(this.user.id)) {
+      this.userSelected = true;
+    }
+  },
+  watch: {
+    selectAll(value) {
+      // Change userSelected to true when the heading checkbox is checked
+      if (value) {
+        this.userSelected = true;
+      }
+    },
+    userSelected(value, formerValue) {
+      if (value && !this.selectedUsers.has(this.user.id)) {
+        // If user is selected
+        this.$store.commit("addUser", this.user);
+      } else if (
+        // Checks to avoid unnecessary $Store commit
+        !value &&
+        formerValue &&
+        this.selectedUsers.has(this.user.id)
+      ) {
+        // If user is deselected (after being selected);
+        this.$store.commit("removeUser", this.user);
+      }
+    },
+    duesPaid(value, oldValue) {
+      // Watch duesPaid to see if all selected dues have been paid, reset userSelected
+      if (value != oldValue) {
+        this.userSelected = false;
+      }
+    },
+  },
   computed: {
+    ...mapState(["selectedUsers"]),
+    selectAll() {
+      // Select All Checkbox from DataTable Heading Column
+      return this.getSelectAll();
+    },
+    duesPaid() {
+      return this.getDuesPaid();
+    },
     paidStatusText() {
       let text = "";
       switch (this.user.payment) {
@@ -129,6 +222,7 @@ export default {
       return text;
     },
     paymentStatusStyles() {
+      // Styles for the statuses
       let styleObject;
       switch (this.user.payment) {
         case "paid":
