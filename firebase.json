@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "scelloo-datatable-2vc4x5oihezrd69",
+    "public": "dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

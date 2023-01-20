@@ -188,6 +188,7 @@ export default {
     TableFooter,
   },
   provide() {
+    // functions to create reactive provides
     return {
       getFilterSort: () => this.sort,
       getFilterUsers: () => this.filterUsers,
