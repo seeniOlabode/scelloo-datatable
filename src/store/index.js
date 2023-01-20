@@ -44,7 +44,16 @@ export default createStore({
     removeUser(state, payload) {
       state.selectedUsers.delete(payload.id);
     },
-    paySelectedDues(state) {
+  },
+  actions: {
+    fetchAndStoreUsers({ commit }) {
+      commit("storeUsers", MOCK_DATA);
+    },
+
+    // Would be Async if API was available
+    paySelectedDues({ state }) {
+      // if API was available
+      // let baseRoute = 'bode-slowmo'
       let selectedUsers = state.selectedUsers;
       selectedUsers.forEach((user) => {
         let temp = user;
@@ -55,12 +64,9 @@ export default createStore({
         user.datePaid = today.toLocaleDateString();
         user = temp;
       });
+      // If API was available
+      // Axios.post(baseRoute + 'mark-paid', user)
       state.selectedUsers = new Map();
-    },
-  },
-  actions: {
-    fetchAndStoreUsers({ commit }) {
-      commit("storeUsers", MOCK_DATA);
     },
   },
 });

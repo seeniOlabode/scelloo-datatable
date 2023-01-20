@@ -20,7 +20,7 @@
     />
 
     <div
-      class="w-full mt-5 rounded-lg bg-white overflow-scroll"
+      class="w-full mt-5 rounded-lg bg-white overflow-x-scroll"
       style="box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2)"
     >
       <div style="min-width: 1240px">
@@ -146,7 +146,7 @@
             <button @click="page = previousPage" :disabled="!previousPage">
               <img
                 class="rotate-180 transition-all"
-                :class="{ 'rotate-90': !previousPage }"
+                :class="{ 'hover:rotate-90': !previousPage }"
                 src="@/assets/caret.svg"
                 alt=""
               />
@@ -157,7 +157,7 @@
             <!-- Next page button -->
             <button
               class="ml-14 transition-all"
-              :class="{ 'rotate-90': !nextPage }"
+              :class="{ 'hover:rotate-90': !nextPage }"
               @click="page = nextPage"
               :disabled="!nextPage"
             >
@@ -242,7 +242,7 @@ export default {
     },
     payDues() {
       this.duesPaid += this.selectedUsers.size;
-      this.$store.commit("paySelectedDues");
+      this.$store.dispatch("paySelectedDues");
       this.selectAll = false;
     },
   },
