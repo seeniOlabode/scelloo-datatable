@@ -25,17 +25,17 @@
       </div>
     </td>
     <td class="flex flex-col select-text" style="gap: 5px">
-      <span class="font-normal text-scelloo-fonts-primary text-sm">{{
+      <span class="font-medium text-scelloo-fonts-primary text-sm">{{
         `${user.firstName} ${user.lastName}`
       }}</span>
-      <span class="text-scelloo-fonts-primary-variant font-thin text-sm">{{
+      <span class="text-scelloo-fonts-primary-variant font-normal text-sm">{{
         user.email
       }}</span>
     </td>
     <td>
       <div class="flex flex-wrap">
         <span
-          class="rounded-xl text-xs font-normal"
+          class="rounded-xl text-xs font-medium"
           :style="{
             color: user.active ? '#4A4AFF' : '#6E6893',
             backgroundColor: user.active ? '#E6E6F2' : '#F2F0F9',
@@ -48,8 +48,9 @@
           class="
             w-full
             text-xs text-scelloo-fonts-primary-variant
-            font-normal
+            font-medium
             select-text
+            leading-3
           "
           style="margin-top: 5px"
           >{{ `Last login: ${user.lastLogin}` }}</span
@@ -59,7 +60,7 @@
     <td>
       <div class="flex flex-wrap">
         <span
-          class="rounded-xl text-xs font-normal capitalize"
+          class="rounded-xl text-xs font-medium capitalize"
           style="padding: 4px 5px 4px 5px"
           :style="paymentStatusStyles"
           ><span style="font-size: 16px">•</span> {{ user.payment }}</span
@@ -68,7 +69,7 @@
           class="
             w-full
             text-xs text-scelloo-fonts-primary
-            font-normal
+            font-medium
             select-text
           "
           style="margin-top: 5px"
@@ -77,7 +78,7 @@
       </div>
     </td>
     <td class="select-text">
-      <div class="flex flex-wrap text-right">
+      <div class="flex flex-wrap text-right font-normal">
         <span class="text-sm w-full text-scelloo-fonts-primary"
           >${{ user.amount }}</span
         >
@@ -100,6 +101,7 @@
             text-xs text-scelloo-fonts-primary-variant text-center
             cursor-pointer
             hover:bg-scelloo-backgrounds-parent
+            font-normal
             rounded
           "
           style="padding: 5px"

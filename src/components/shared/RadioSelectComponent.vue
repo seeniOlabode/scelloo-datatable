@@ -5,7 +5,7 @@
         uppercase
         text-xs text-scelloo-fonts-primary-variant
         tracking-wider
-        font-light
+        font-normal
       "
       style="padding-left: 10px; margin-bottom: 5px"
     >
@@ -29,7 +29,7 @@
         :for="option + index + selectName"
         class="
           text-sm
-          font-light
+          font-normal
           text-scelloo-fonts-primary
           cursor-pointer
           tracking-wider

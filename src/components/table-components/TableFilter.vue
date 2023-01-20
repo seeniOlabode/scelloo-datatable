@@ -7,7 +7,7 @@
         justify-center
         rounded-md
         border-solid border-scelloo-fonts-stroke border
-        font-thin
+        font-normal
         text-base
         hover:border-scelloo-primary
       "

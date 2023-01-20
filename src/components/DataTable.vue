@@ -55,7 +55,7 @@
               <input
                 type="search"
                 placeholder="Search Users by Name, Email or Date"
-                class="bg-none text-xs w-80"
+                class="bg-none text-xs w-80 font-normal"
                 style="background-color: rgba(0, 0, 0, 0); margin-left: 10px"
                 id="search-input"
                 v-model="searchString"
@@ -72,6 +72,7 @@
               rounded-md
               text-base
               font-semibold
+              leading-5
               cursor-pointer
             "
             style="width: 99px; height: 40px"
@@ -126,7 +127,7 @@
             flex
             items-center
             justify-center
-            font-medium
+            font-semibold
             text-scelloo-fonts-primary-variant
             tracking-wider
           "

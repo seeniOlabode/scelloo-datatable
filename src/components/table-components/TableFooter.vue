@@ -21,7 +21,7 @@
         text-xs
         tracking-wider
         text-scelloo-fonts-primary-variant
-        font-medium
+        font-semibold
       "
       style="margin-right: 50px; margin-left: 50px"
     >

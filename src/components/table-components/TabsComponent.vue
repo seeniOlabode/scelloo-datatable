@@ -22,7 +22,7 @@
           px-2
           capitalize
           text-scelloo-fonts-primary-variant
-          font-normal
+          font-medium
           text-sm
           cursor-pointer
         "
@@ -46,12 +46,12 @@
       ></li>
     </ul>
 
-    <p class="text-sm font-thin text-scelloo-fonts-primary-variant">
+    <p class="text-sm font-normal text-scelloo-fonts-primary-variant">
       Total payable amount:
       <span class="text-lg font-bold text-scelloo-primary">{{
         formatter.format(getUnpaidTotal)
       }}</span>
-      <span class="text-lg tonf-normal text-scelloo-fonts-primary-variant">
+      <span class="text-lg font-normal text-scelloo-fonts-primary-variant">
         USD</span
       >
     </p>

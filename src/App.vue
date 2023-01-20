@@ -27,7 +27,7 @@ export default {
 
 <style>
 #app {
-  @apply bg-scelloo-backgrounds-parent w-screen;
+  @apply bg-scelloo-backgrounds-parent w-screen leading-4;
   min-height: 100vh;
 }
 </style>

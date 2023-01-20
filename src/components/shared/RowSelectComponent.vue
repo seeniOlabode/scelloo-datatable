@@ -1,7 +1,13 @@
 <template>
   <div class="custom-select relative">
     <label
-      class="text-xs text-scelloo-fonts-primary-variant flex cursor-pointer"
+      class="
+        text-xs text-scelloo-fonts-primary-variant
+        flex
+        cursor-pointer
+        font-semibold
+        tracking-wider
+      "
       @click="displayOptions = !displayOptions"
       ><span
         >{{ rowSelectData.label }}:

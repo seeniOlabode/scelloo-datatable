@@ -47,7 +47,7 @@
                 text-sm
                 tracking-wider
                 text-scelloo-fonts-primary-variant
-                font-light
+                font-normal
                 w-52
               "
             >
@@ -58,14 +58,22 @@
                 first:pl-24
                 py-3
                 text-sm text-scelloo-fonts-primary
-                font-light
+                font-normal
+                leading-4
               "
               style="width: 300px"
             >
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Ultricies.
             </td>
-            <td class="pr-20 text-sm text-scelloo-fonts-primary font-light">
+            <td
+              class="
+                pr-20
+                text-sm text-scelloo-fonts-primary
+                font-normal
+                leading-4
+              "
+            >
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Rhoncus,
               sed purus eu semper morbi id nunc, adipiscing vitae. Ultricies
               suspendisse vestibulum.
@@ -79,7 +87,7 @@
             flex
             items-center
             justify-center
-            font-medium
+            font-semibold
             text-scelloo-fonts-primary-variant
             tracking-wider
             bg-scelloo-backgrounds-stripe

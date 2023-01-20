@@ -19,7 +19,7 @@
     ></div>
     <span
       style="z-index: 50"
-      class="relative tracking-wider font-normal normal-case"
+      class="relative tracking-wider font-semibold normal-case"
     >
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Feugiat eget.
     </span>

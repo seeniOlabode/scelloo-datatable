@@ -24,7 +24,7 @@
           hover:bg-scelloo-backgrounds-parent
           cursor-pointer
           rounded
-          font-light
+          font-normal
           text-sm text-scelloo-fonts-primary
         "
         :class="option.class"
@@ -40,7 +40,7 @@
           hover:bg-scelloo-backgrounds-parent
           cursor-pointer
           rounded
-          font-light
+          font-normal
           text-sm
         "
         style="padding: 5px"
