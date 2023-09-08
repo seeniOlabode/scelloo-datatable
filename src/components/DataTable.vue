@@ -14,10 +14,10 @@
     />
 
     <div
-      class="w-full mt-5 rounded-lg bg-white"
+      class="w-full mt-5 rounded-lg bg-white overflow-scroll"
       style="box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2)"
     >
-      <div>
+      <div class="min-w-[1100px] sm:min-w-0">
         <div
           class="border-b border-solid flex items-center justify-between px-5"
           style="border-color: #d9d5ec; height: 70px"
@@ -276,12 +276,12 @@ export default {
   transition: border-color 0.2s;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (min-width: 640px) {
   .table-el-container {
     overflow: scroll;
   }
   .data-table {
-    min-width: 1024px;
+    min-width: 1100px;
   }
 }
 </style>
